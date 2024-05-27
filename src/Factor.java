@@ -31,9 +31,9 @@ public class Factor implements Comparable<Factor> {
         for (Map.Entry<List<String>, Double> entry : table.entrySet()) {
             List<String> key = new ArrayList<>(entry.getKey());
             key.remove(index);
-            newTable.merge(key, round(entry.getValue()), (v1, v2) -> {
+            newTable.merge(key, entry.getValue(), (v1, v2) -> {
                 additions[0]++;
-                return round(v1 + v2);
+                return v1 + v2;
             });
         }
 
@@ -65,7 +65,7 @@ public class Factor implements Comparable<Factor> {
                             newKey.add(entry2.getKey().get(i));
                         }
                     }
-                    double newValue = round(entry1.getValue() * entry2.getValue());
+                    double newValue = entry1.getValue() * entry2.getValue();
                     multiplications++;
                     newTable.put(newKey, newValue);
                 }
@@ -86,12 +86,6 @@ public class Factor implements Comparable<Factor> {
             }
         }
         return true;
-    }
-
-    private double round(double value) {
-        BigDecimal bd = new BigDecimal(Double.toString(value));
-        bd = bd.setScale(5, RoundingMode.HALF_UP);
-        return bd.doubleValue();
     }
 
     public boolean containsVariable(String variable) {

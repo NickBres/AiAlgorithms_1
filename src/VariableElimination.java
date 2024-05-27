@@ -86,13 +86,6 @@ public class VariableElimination {
         return new int[] {firstIndex, secondIndex};
     }
 
-    public double normalizeFactor(Factor finalFactor, String queryValue, List<SimpleEntry<String, String>> evidence) {
-        double normalizationConstant = 0;
-        double queryProbability = 0;
-
-        System.out.println(evidence);
-        return 0;
-    }
 
 
 
