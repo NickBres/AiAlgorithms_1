@@ -47,4 +47,14 @@ public class QueryTest {
         List<String> expectedHiddenVariables = Collections.emptyList();
         assertEquals(expectedHiddenVariables, parsedQuery.getHiddenVariables());
     }
+
+    @Test
+    void testRemoveHiddenVariable() {
+        String queryString = "P(Q=q|E1=e1, E2=e2) H1-H2-H3";
+        Query query = new Query(queryString);
+
+        assertEquals(List.of("H1", "H2", "H3"), query.getHiddenVariables());
+        query.removeHiddenVariable("H2");
+        assertEquals(List.of("H1", "H3"), query.getHiddenVariables());
+    }
 }
