@@ -1,49 +1,63 @@
-//import java.util.*;
-//
-//public class BayesBall {
-//    public static boolean isIndependent(BayesianNetwork network, String A, String B, List<String> evidence) {
-//        Set<String> visited = new HashSet<>();
-//        Queue<String> queue = new LinkedList<>();
-//        queue.add(A + "|forward");
-//
-//        while (!queue.isEmpty()) {
-//            String current = queue.poll();
-//            if (visited.contains(current)) continue;
-//            visited.add(current);
-//
-//            String[] parts = current.split("\\|");
-//            String node = parts[0];
-//            String direction = parts[1];
-//
-//            if (node.equals(B)) return false;
-//
-//            Node currentNode = network.getNode(node);
-//            if (currentNode == null) {
-//                throw new IllegalArgumentException("Node " + node + " not found in the network.");
-//            }
-//
-//            if (direction.equals("forward")) {
-//                if (!evidence.contains(node)) {
-//                    for (Node child : currentNode.children) {
-//                        queue.add(child.name + "|forward");
-//                    }
-//                    for (Node parent : currentNode.parents) {
-//                        queue.add(parent.name + "|backward");
-//                    }
-//                }
-//            } else if (direction.equals("backward")) {
-//                if (!evidence.contains(node)) {
-//                    for (Node parent : currentNode.parents) {
-//                        queue.add(parent.name + "|backward");
-//                    }
-//                }
-//                for (Node child : currentNode.children) {
-//                    if (!evidence.contains(node) && !evidence.contains(child.name)) {
-//                        queue.add(child.name + "|forward");
-//                    }
-//                }
-//            }
-//        }
-//        return true;
-//    }
-//}
+import java.util.*;
+
+public class BayesBall {
+    private enum Direction {
+        FORWARD, BACKWARD
+    }
+
+    public static boolean isIndependent(BayesianNetwork network, String A, String B, Set<String> evidence) {
+        Set<String> visited = new HashSet<>();
+        Queue<Pair> queue = new LinkedList<>();
+        queue.add(new Pair(A, Direction.FORWARD));
+
+
+        while (!queue.isEmpty()) {
+            Pair pair = queue.poll();
+            String curr = pair.node;
+            Direction dir = pair.direction;
+
+            if (visited.contains(curr + dir)) {
+                continue;
+            }
+            visited.add(curr + dir);
+
+            if (curr.equals(B)) {
+                return false;
+            }
+
+            Node currNode = network.getNode(curr);
+
+            if (dir == Direction.FORWARD) {
+                for (Node child : currNode.getChildren()) {
+                    if (evidence.contains(child.getName())) {
+                        for (Node parent : child.getParents()) {
+                            queue.add(new Pair(parent.getName(), Direction.BACKWARD));
+                        }
+                    } else {
+                        queue.add(new Pair(child.getName(), Direction.FORWARD));
+                    }
+                }
+            } else if (dir == Direction.BACKWARD) {
+                for (Node parent : currNode.getParents()) {
+                    if (!evidence.contains(parent.getName())) {
+                        queue.add(new Pair(parent.getName(), Direction.BACKWARD));
+                        for (Node sibling : parent.getChildren()) {
+                            queue.add(new Pair(sibling.getName(), Direction.FORWARD));
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private static class Pair {
+        String node;
+        Direction direction;
+
+        Pair(String node, Direction direction) {
+            this.node = node;
+            this.direction = direction;
+        }
+    }
+}

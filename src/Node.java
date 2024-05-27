@@ -122,4 +122,14 @@ public class Node {
     public Map<List<String>, Double> getCPT() {
         return cpt;
     }
+
+    public Factor toFactor() {
+        List<String> columnNames = new ArrayList<>();
+        for (Node parent : parents) {
+            columnNames.add(parent.getName());
+        }
+        columnNames.add(this.name);
+
+        return new Factor(columnNames, this.cpt);
+    }
 }

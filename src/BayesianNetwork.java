@@ -22,6 +22,14 @@ public class BayesianNetwork {
         return this.network.get(name);
     }
 
+    public Collection<Node> getNodes() {
+        return network.values();
+    }
+
+    public void removeNode(String name) {
+        this.network.remove(name);
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
