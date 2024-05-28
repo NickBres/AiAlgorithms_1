@@ -28,7 +28,8 @@ public class VariableElimination {
                     factor = factor.instantiate(e.getKey(), e.getValue());
                 }
             }
-            factors.add(factor);
+            if(!factor.canBeDiscarded()) // don't add factors that can be discarded (contain one variable only)
+                factors.add(factor);
         }
         factors.sort(Comparator.naturalOrder()); // sort factors by their size
     }
